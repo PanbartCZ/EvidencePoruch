@@ -12,21 +12,28 @@
  
 @php
     $toast = null;
-    if (session('success')) {
-        $toast = ['success', session('success')];
-    } elseif (session('error')) {
-        $toast = ['error', session('error')];
-    }
+    if (session('success'))            $toast = ['success', session('success')];
+    elseif (session('success_heslo'))  $toast = ['success', session('success_heslo')];
+    elseif (session('error'))          $toast = ['error', session('error')];
+ 
+    $toastStyles = [
+        'success' => ['border' => 'border-emerald-500', 'text' => 'text-emerald-500', 'bar' => 'bg-emerald-500', 'icon' => 'bi-check-circle-fill'],
+        'error'   => ['border' => 'border-red-500',     'text' => 'text-red-500',     'bar' => 'bg-red-500',     'icon' => 'bi-exclamation-triangle-fill'],
+    ];
 @endphp
  
 @if($toast)
-    <div class="toast toast-{{ $toast[0] }}" id="toast" role="alert">
-        <i class="bi {{ $toast[0] === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
-        <span>{{ $toast[1] }}</span>
-        <button type="button" class="toast-close" aria-label="Zavřít">&times;</button>
-        <div class="toast-progress"></div>
+    @php $t = $toastStyles[$toast[0]]; @endphp
+    <div id="toast" role="alert" data-closing="false"
+         class="animate-toast-in fixed inset-x-4 top-5 z-[1000] flex items-center gap-3 overflow-hidden rounded-xl border-l-4 bg-white py-3.5 pl-4 pr-3 text-[#1f2a44] shadow-xl transition duration-300 data-[closing=true]:translate-x-8 data-[closing=true]:opacity-0 sm:inset-x-auto sm:right-5 sm:min-w-[300px] sm:max-w-[420px] {{ $t['border'] }}">
+        <i class="bi {{ $t['icon'] }} text-xl {{ $t['text'] }}"></i>
+        <span class="flex-1 text-sm font-medium">{{ $toast[1] }}</span>
+        <button type="button" data-toast-close aria-label="Zavřít"
+                class="cursor-pointer px-1 text-xl leading-none text-gray-400 transition hover:text-gray-800">&times;</button>
+        <div class="animate-toast-progress absolute bottom-0 left-0 h-[3px] w-full origin-left opacity-30 {{ $t['bar'] }}"></div>
     </div>
 @endif
+ 
  
 <main class="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl sm:p-10">
  
